@@ -1,6 +1,6 @@
 <template>
   <grid-layout
-    v-model:layout="layout"
+    :layout="layout"
     :col-num="12"
     :row-height="30"
     :is-draggable="true"
@@ -12,12 +12,12 @@
   >
     <grid-item
       v-for="item in layout"
+      :key="item.i"
       :x="item.x"
       :y="item.y"
       :w="item.w"
       :h="item.h"
       :i="item.i"
-      :key="item.i"
     >
       {{ item.i }}
     </grid-item>

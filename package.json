@@ -19,7 +19,8 @@
     "vue-class-component": "^8.0.0-0",
     "vue-grid-layout": "https://github.com/lvjunhao/vue-grid-layout",
     "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0"
+    "vuex": "^4.0.0-0",
+    "vue-property-decorator":"^10.0.0-rc.3"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
