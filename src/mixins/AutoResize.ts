@@ -1,53 +1,53 @@
-import { debounce, observerDomResize } from "@/utils";
+import { createDelayFunc, observerDomResize } from "@/utils";
 import { Vue } from "vue-property-decorator";
 export default class AutoResize extends Vue {
   dom!: Element;
   width = 0;
   height = 0;
-  debounceInitWHFun!: () => void;
+  delayInitWHFun!: () => void;
   domObserver!: MutationObserver;
   ref!: string;
 
   async autoResizeMixinInit(): Promise<void> {
     const {
       initWH,
-      getDebounceInitWHFun,
+      getDelayInitWHFun,
       bindDomResizeCallback,
       afterAutoResizeMixinInit,
     } = this;
 
     await initWH(false);
 
-    getDebounceInitWHFun();
+    getDelayInitWHFun();
 
     bindDomResizeCallback();
 
     afterAutoResizeMixinInit();
   }
 
-  getDebounceInitWHFun(): void {
+  getDelayInitWHFun(): void {
     const { initWH } = this;
 
-    this.debounceInitWHFun = debounce(100, initWH);
+    this.delayInitWHFun = createDelayFunc(100, initWH);
   }
 
   bindDomResizeCallback(): void {
-    const { dom, debounceInitWHFun } = this;
+    const { dom, delayInitWHFun } = this;
 
-    this.domObserver = observerDomResize(dom, debounceInitWHFun);
+    this.domObserver = observerDomResize(dom, delayInitWHFun);
 
-    window.addEventListener("resize", debounceInitWHFun);
+    window.addEventListener("resize", delayInitWHFun);
   }
 
   unbindDomResizeCallback(): void {
-    const { domObserver, debounceInitWHFun } = this;
+    const { domObserver, delayInitWHFun } = this;
 
     if (!domObserver) return;
 
     domObserver.disconnect();
     domObserver.takeRecords();
 
-    window.removeEventListener("resize", debounceInitWHFun);
+    window.removeEventListener("resize", delayInitWHFun);
   }
 
   afterAutoResizeMixinInit(): void {

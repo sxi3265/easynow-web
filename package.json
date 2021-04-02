@@ -10,6 +10,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^6.0.1",
+    "ant-design-vue": "^2.1.2",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "qs": "^6.10.1",
@@ -18,9 +20,9 @@
     "vue-axios": "^3.2.4",
     "vue-class-component": "^8.0.0-0",
     "vue-grid-layout": "https://github.com/lvjunhao/vue-grid-layout",
+    "vue-property-decorator": "^10.0.0-rc.3",
     "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0",
-    "vue-property-decorator":"^10.0.0-rc.3"
+    "vuex": "^4.0.0-0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
@@ -40,6 +42,7 @@
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^7.0.0",
     "@vue/test-utils": "^2.0.0-0",
+    "babel-plugin-import": "^1.13.3",
     "chai": "^4.1.2",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.3.1",
