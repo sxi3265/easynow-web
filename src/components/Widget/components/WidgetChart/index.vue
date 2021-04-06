@@ -32,10 +32,6 @@ export default class WidgetChart extends mixins(WidgetBase) {
 
   @Prop({ default: {} }) contentOptions!: ChartOptions;
 
-  public refreshOptions(options: any): void {
-    console.log(options);
-  }
-
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any
   public refreshContent(contentData: any): void {
     if (!this.contentOptions) {

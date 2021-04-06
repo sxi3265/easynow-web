@@ -1,4 +1,7 @@
-# easynow-web
+# EasyNow前端框架
+
+## 项目简介
+数据可视化项目
 
 ## Project setup
 ```
@@ -30,5 +33,5 @@ yarn test:e2e
 yarn lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## 参考项目
+[DataV](https://github.com/DataV-Team/DataV)

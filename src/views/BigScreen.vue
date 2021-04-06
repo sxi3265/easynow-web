@@ -1,5 +1,10 @@
 <template>
-  <widget-container :data-options="dataOptions" border="border-box-1" />
+  <widget-container
+    v-if="dataOptions"
+    :data-options="dataOptions"
+    :border="border"
+  />
+  <a-spin v-else />
 </template>
 
 <script lang="ts">
@@ -11,25 +16,20 @@ import { DataOptions } from "@/components/Widget/components/WidgetBase";
     WidgetContainer,
   },
 })
-export default class Home extends Vue {
+export default class BigScreen extends Vue {
+  border = "";
   dataOptions: DataOptions = {
-    loaders: [
-      {
-        type: "rest",
-        url: "/api/widget/getall",
-        method: "GET",
-      },
-    ],
-    filters: [
-      {
-        type: "global",
-        name: "getFirstLoaderData",
-      },
-      {
-        type: "custom",
-        func: "return data.data;",
-      },
-    ],
+    loaders: [],
+    filters: [],
   };
+
+  public mounted(): void {
+    this.$http
+      .get("/api/DashBoard/GetByCode", { params: { code: "main" } })
+      .then((resp) => {
+        this.border = resp.data.border;
+        this.dataOptions = resp.data.dataOptions;
+      });
+  }
 }
 </script>

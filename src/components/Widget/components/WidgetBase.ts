@@ -1,5 +1,5 @@
 import AutoResize from "@/mixins/AutoResize";
-import { Prop, mixins } from "vue-property-decorator";
+import { Prop, mixins, Watch } from "vue-property-decorator";
 import filters from "../filters";
 
 export interface GlobalDataFilter {
@@ -35,22 +35,29 @@ export default abstract class WidgetBase extends mixins(AutoResize) {
   @Prop({ default: "" }) border!: string;
   @Prop({ default: {} }) contentOptions!: unknown;
 
+  @Watch("dataOptions", { deep: true })
+  onDataOptionsChange(): void {
+    this.refreshWidget();
+  }
+
   protected refreshWidget(): void {
     this.loadData().then((data) => {
       const result = this.processData(data);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let contentData: any = result;
       if (!(result instanceof Array)) {
-        contentData = contentData.contentData;
         if (contentData.options) {
           this.refreshOptions(contentData.options);
         }
+        contentData = contentData.contentData;
       }
       this.refreshContent(contentData);
     });
   }
 
-  abstract refreshOptions(options: unknown): void;
+  public refreshOptions(options: unknown): void {
+    Object.assign(this.contentOptions, options);
+  }
 
   /**
    * 刷新内容

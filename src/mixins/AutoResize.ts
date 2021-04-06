@@ -36,9 +36,6 @@ export default class AutoResize extends Vue {
 
   bindDomResizeCallback(): void {
     const { dom, delayInitWHFun } = this;
-    if (dom instanceof Node) {
-      return;
-    }
     this.domObserver = observerDomResize(dom, delayInitWHFun);
 
     window.addEventListener("resize", delayInitWHFun);

@@ -1,6 +1,6 @@
 <template>
   <border-box :border="border">
-    <div class="toolbar">
+    <div class="toolbar" v-if="contentOptions.showToolbar">
       <template v-if="editable">
         <PlusOutlined @click="onAdd" />
         <CloseOutlined @click="onCancel" />
@@ -15,14 +15,14 @@
       :ref="ref"
       v-if="showLayout"
       v-model:layout="layouts"
-      :col-num="12"
-      :row-height="30"
+      :col-num="contentOptions.colNum"
+      :row-height="contentOptions.rowHeight"
       :is-draggable="editable"
       :is-resizable="editable"
-      :is-mirrored="false"
-      :vertical-compact="true"
-      :margin="[10, 10]"
-      :use-css-transforms="true"
+      :is-mirrored="contentOptions.isMirrored"
+      :vertical-compact="contentOptions.verticalCompact"
+      :margin="contentOptions.margin"
+      :use-css-transforms="contentOptions.useCssTransforms"
       style="min-height: 100%"
     >
       <grid-item
@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { Options, mixins } from "vue-property-decorator";
+import { Options, mixins, Prop } from "vue-property-decorator";
 import { GridLayout, GridItem, GridItemData } from "vue-grid-layout";
 import WidgetBase from "../WidgetBase";
 import Widgets from "../widgets";
@@ -59,6 +59,26 @@ import {
   CloseOutlined,
   PlusOutlined,
 } from "@ant-design/icons-vue";
+
+export interface ContainerOptions {
+  colNum: number;
+  rowHeight: number;
+  isMirrored: boolean;
+  verticalCompact: boolean;
+  margin: number[];
+  useCssTransforms: boolean;
+  showToolbar: boolean;
+}
+
+const DefaultContainerOptions: ContainerOptions = {
+  colNum: 12,
+  rowHeight: 30,
+  isMirrored: false,
+  verticalCompact: true,
+  margin: [10, 10],
+  useCssTransforms: true,
+  showToolbar: false,
+};
 
 @Options({
   components: {
@@ -80,9 +100,7 @@ export default class WidgetContainer extends mixins(WidgetBase) {
   private widgets: Array<any> = [];
   private layouts: GridItemData[] = [];
 
-  public refreshOptions(options: any): void {
-    console.log(options);
-  }
+  @Prop({ default: DefaultContainerOptions }) contentOptions!: ContainerOptions;
 
   refreshContent(contentData: Array<any>): void {
     this.widgets = contentData;
