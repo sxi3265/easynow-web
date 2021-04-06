@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import WidgetContainer from "@/components/WidgetContainer/index.vue";
+import WidgetContainer from "@/components/Widget/components/WidgetContainer/index.vue";
 @Options({
   components: {
     WidgetContainer,

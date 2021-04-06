@@ -7,6 +7,9 @@ import VueAxios from "vue-axios";
 import axios from "@/utils/axios";
 import Antd from "ant-design-vue";
 import "ant-design-vue/dist/antd.css";
+import mock from "@/mock";
+
+mock.init();
 
 createApp(App)
   .use(store)

@@ -13,7 +13,7 @@
     </div>
     <grid-layout
       v-if="showLayout"
-      v-model:layout="layout"
+      v-model:layout="layouts"
       :col-num="12"
       :row-height="30"
       :is-draggable="editable"
@@ -22,18 +22,24 @@
       :vertical-compact="true"
       :margin="[10, 10]"
       :use-css-transforms="true"
+      style="min-height: 100%"
     >
       <grid-item
         :class="editable ? 'editable' : ''"
-        v-for="item in layout"
-        :key="item.i"
-        :x="item.x"
-        :y="item.y"
-        :w="item.w"
-        :h="item.h"
-        :i="item.i"
+        v-for="item in widgets"
+        :key="item.layout.i"
+        :x="item.layout.x"
+        :y="item.layout.y"
+        :w="item.layout.w"
+        :h="item.layout.h"
+        :i="item.layout.i"
+        :is-resiable="item.layout.isResiable"
+        :min-w="item.layout.minW"
+        :min-h="item.layout.minH"
+        :max-w="item.layout.maxW || Infinity"
+        :max-h="item.layout.maxH || Infinity"
       >
-        {{ item.i }}
+        <component :is="`Widget${item.type}`" v-bind="item.options" />
       </grid-item>
     </grid-layout>
   </div>
@@ -42,6 +48,7 @@
 <script lang="ts">
 import { Vue, Options } from "vue-property-decorator";
 import { GridLayout, GridItem, GridItemData } from "vue-grid-layout";
+import Widgets from "../widgets";
 import {
   RedoOutlined,
   EditOutlined,
@@ -59,33 +66,14 @@ import {
     CheckOutlined,
     CloseOutlined,
     PlusOutlined,
+    ...Widgets,
   },
 })
 export default class WidgetContainer extends Vue {
   private showLayout = true;
   private editable = false;
-  private layout: GridItemData[] = [
-    { x: 0, y: 0, w: 2, h: 2, i: "0" },
-    { x: 2, y: 0, w: 2, h: 4, i: "1" },
-    { x: 4, y: 0, w: 2, h: 5, i: "2" },
-    { x: 6, y: 0, w: 2, h: 3, i: "3" },
-    { x: 8, y: 0, w: 2, h: 3, i: "4" },
-    { x: 10, y: 0, w: 2, h: 3, i: "5" },
-    { x: 0, y: 5, w: 2, h: 5, i: "6" },
-    { x: 2, y: 5, w: 2, h: 5, i: "7" },
-    { x: 4, y: 5, w: 2, h: 5, i: "8" },
-    { x: 6, y: 3, w: 2, h: 4, i: "9" },
-    { x: 8, y: 4, w: 2, h: 4, i: "10" },
-    { x: 10, y: 4, w: 2, h: 4, i: "11" },
-    { x: 0, y: 10, w: 2, h: 5, i: "12" },
-    { x: 2, y: 10, w: 2, h: 5, i: "13" },
-    { x: 4, y: 8, w: 2, h: 4, i: "14" },
-    { x: 6, y: 8, w: 2, h: 4, i: "15" },
-    { x: 8, y: 10, w: 2, h: 5, i: "16" },
-    { x: 10, y: 4, w: 2, h: 2, i: "17" },
-    { x: 0, y: 9, w: 2, h: 3, i: "18" },
-    { x: 2, y: 6, w: 2, h: 2, i: "19" },
-  ];
+  private widgets: Array<any> = [];
+  private layouts: GridItemData[] = [];
 
   private onReload() {
     this.showLayout = false;
@@ -99,7 +87,7 @@ export default class WidgetContainer extends Vue {
   }
 
   private onConfirm() {
-    console.log("confirm", this.layout);
+    console.log("confirm", this.layouts);
     this.editable = false;
   }
 
@@ -109,6 +97,13 @@ export default class WidgetContainer extends Vue {
 
   private onAdd() {
     console.log("add");
+  }
+
+  public mounted(): void {
+    this.$http.get("/api/widget/getall").then((resp) => {
+      this.widgets = resp.data;
+      this.layouts = resp.data.map((i: any) => i.layout);
+    });
   }
 }
 </script>
