@@ -115,7 +115,7 @@ export default class BorderBox1 extends mixins(AutoResize) {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .dv-border-box-1 {
   position: relative;
   width: 100%;

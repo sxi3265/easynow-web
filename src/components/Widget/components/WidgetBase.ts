@@ -30,7 +30,6 @@ export interface RestDataLoader {
   reqData?: string;
   reqDataFunc?: string;
 }
-
 export default abstract class WidgetBase extends mixins(AutoResize) {
   @Prop({ default: {} }) dataOptions!: DataOptions;
   @Prop({ default: "" }) border!: string;
@@ -39,13 +38,19 @@ export default abstract class WidgetBase extends mixins(AutoResize) {
   protected refreshWidget(): void {
     this.loadData().then((data) => {
       const result = this.processData(data);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let contentData: any = result;
       if (!(result instanceof Array)) {
         contentData = contentData.contentData;
+        if (contentData.options) {
+          this.refreshOptions(contentData.options);
+        }
       }
       this.refreshContent(contentData);
     });
   }
+
+  abstract refreshOptions(options: unknown): void;
 
   /**
    * 刷新内容
@@ -74,21 +79,16 @@ export default abstract class WidgetBase extends mixins(AutoResize) {
               resolve(dataFunc());
             } else if (loader.data) {
               resolve(JSON.parse(loader.data));
-            } else {
-              reject(`请检查数据加载器配置`);
             }
             break;
           case "rest":
             {
-              let reqData;
+              let reqData = null;
               if (loader.reqDataFunc) {
                 const reqDataFunc = new Function(loader.reqDataFunc);
                 reqData = reqDataFunc();
               } else if (loader.reqData) {
                 reqData = JSON.parse(loader.reqData);
-              } else {
-                reject(`请检查数据加载器配置`);
-                return;
               }
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               ((this.$http as any)[loader.method.toLowerCase()](
@@ -129,6 +129,7 @@ export default abstract class WidgetBase extends mixins(AutoResize) {
         case "global":
           {
             if (filter.name in filters) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               result = (filters as any)[filter.name](result);
             } else {
               throw new Error(`未找到全局过滤器${filter.name}`);
@@ -148,5 +149,9 @@ export default abstract class WidgetBase extends mixins(AutoResize) {
       }
     }
     return result;
+  }
+
+  public mounted(): void {
+    this.refreshWidget();
   }
 }

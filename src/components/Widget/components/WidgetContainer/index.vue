@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <border-box :border="border">
     <div class="toolbar">
       <template v-if="editable">
         <PlusOutlined @click="onAdd" />
@@ -12,6 +12,7 @@
       </template>
     </div>
     <grid-layout
+      :ref="ref"
       v-if="showLayout"
       v-model:layout="layouts"
       :col-num="12"
@@ -42,13 +43,15 @@
         <component :is="`Widget${item.type}`" v-bind="item.options" />
       </grid-item>
     </grid-layout>
-  </div>
+  </border-box>
 </template>
 
 <script lang="ts">
-import { Vue, Options } from "vue-property-decorator";
+import { Options, mixins } from "vue-property-decorator";
 import { GridLayout, GridItem, GridItemData } from "vue-grid-layout";
+import WidgetBase from "../WidgetBase";
 import Widgets from "../widgets";
+import BorderBox from "@/components/BorderBox/index.vue";
 import {
   RedoOutlined,
   EditOutlined,
@@ -67,13 +70,24 @@ import {
     CloseOutlined,
     PlusOutlined,
     ...Widgets,
+    BorderBox,
   },
 })
-export default class WidgetContainer extends Vue {
+export default class WidgetContainer extends mixins(WidgetBase) {
+  ref = "grid-layout";
   private showLayout = true;
   private editable = false;
   private widgets: Array<any> = [];
   private layouts: GridItemData[] = [];
+
+  public refreshOptions(options: any): void {
+    console.log(options);
+  }
+
+  refreshContent(contentData: Array<any>): void {
+    this.widgets = contentData;
+    this.layouts = contentData.map((i: any) => i.layout);
+  }
 
   private onReload() {
     this.showLayout = false;
@@ -97,13 +111,6 @@ export default class WidgetContainer extends Vue {
 
   private onAdd() {
     console.log("add");
-  }
-
-  public mounted(): void {
-    this.$http.get("/api/widget/getall").then((resp) => {
-      this.widgets = resp.data;
-      this.layouts = resp.data.map((i: any) => i.layout);
-    });
   }
 }
 </script>

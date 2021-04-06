@@ -9,6 +9,9 @@ export default class AutoResize extends Vue {
   ref!: string;
 
   async autoResizeMixinInit(): Promise<void> {
+    if (!this.ref) {
+      return;
+    }
     const {
       initWH,
       getDelayInitWHFun,
@@ -33,7 +36,9 @@ export default class AutoResize extends Vue {
 
   bindDomResizeCallback(): void {
     const { dom, delayInitWHFun } = this;
-
+    if (dom instanceof Node) {
+      return;
+    }
     this.domObserver = observerDomResize(dom, delayInitWHFun);
 
     window.addEventListener("resize", delayInitWHFun);

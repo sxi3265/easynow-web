@@ -1,14 +1,14 @@
 <template>
-  <component v-if="border" :is="border">
+  <border-box :border="border">
     <div :ref="ref" class="chart"></div>
-  </component>
-  <div v-else :ref="ref" class="chart"></div>
+  </border-box>
 </template>
 
 <script lang="ts">
-import { Prop, mixins } from "vue-property-decorator";
+import { Prop, mixins, Options } from "vue-property-decorator";
 import WidgetBase from "../WidgetBase";
 import { DualAxes, Line, Column, Area, Bar, Plot } from "@antv/g2plot";
+import BorderBox from "@/components/BorderBox/index.vue";
 
 export interface ChartOptions {
   series: ChartSeries[];
@@ -19,6 +19,11 @@ export interface ChartSeries {
   options: Record<string, unknown>;
 }
 
+@Options({
+  components: {
+    BorderBox,
+  },
+})
 export default class WidgetChart extends mixins(WidgetBase) {
   ref = "chart";
   $refs!: {
@@ -27,6 +32,11 @@ export default class WidgetChart extends mixins(WidgetBase) {
 
   @Prop({ default: {} }) contentOptions!: ChartOptions;
 
+  public refreshOptions(options: any): void {
+    console.log(options);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any
   public refreshContent(contentData: any): void {
     if (!this.contentOptions) {
       throw new Error("Chart内容配置有误");
@@ -41,6 +51,7 @@ export default class WidgetChart extends mixins(WidgetBase) {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private getChart(data: any): Plot<any> {
     if (this.contentOptions.series.length > 1) {
       return new DualAxes(this.$refs.chart, {
@@ -93,10 +104,6 @@ export default class WidgetChart extends mixins(WidgetBase) {
       default:
         throw new Error(`未找到图表${series.type}`);
     }
-  }
-
-  public mounted(): void {
-    this.refreshWidget();
   }
 }
 </script>

@@ -37,6 +37,10 @@ export function observerDomResize(
 
   const observer = new MutationObserver(callback);
 
+  if (!(dom instanceof Node)) {
+    return observer;
+  }
+
   observer.observe(dom, {
     attributes: true,
     attributeFilter: ["style"],
